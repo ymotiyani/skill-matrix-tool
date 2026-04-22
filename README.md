@@ -2,6 +2,8 @@
 
 A web-based dashboard that visualizes your organization's skill matrix data from an Excel spreadsheet. Browse employees across **9 departments**, filter by product or skill, view proficiency levels, and manage skills — all from your browser.
 
+![Skill Matrix Tool Demo](demo.gif)
+
 ---
 
 ## Table of Contents
@@ -67,6 +69,7 @@ skill-matrix-tool/
 ├── extract_data.py     # Python script to parse Excel → data.json
 ├── data.json           # Generated JSON data (do not edit manually)
 ├── source.xlsx         # Source Excel workbook with skill matrix data
+├── demo.gif            # Animated demo for README
 ├── audit.py            # Utility: audit/inspect extracted data per department
 ├── debug_sheets.py     # Utility: debug raw Excel sheet contents row-by-row
 └── README.md           # This file
