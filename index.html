@@ -1,0 +1,1738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upland Skill Matrix - Software Engineering</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #818cf8;
+            --primary-dark: #3730a3;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --sidebar-bg: #1e1b4b;
+            --sidebar-text: #e0e7ff;
+            --text: #1e293b;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --hover-bg: #f1f5f9;
+            --input-bg: #ffffff;
+            --table-header: #f1f5f9;
+
+            --prof-expert: #10b981;
+            --prof-intermediate: #3b82f6;
+            --prof-basic: #f59e0b;
+            --prof-none: #94a3b8;
+        }
+
+        [data-theme="dark"] {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+            --hover-bg: #334155;
+            --input-bg: #1e293b;
+            --table-header: #334155;
+            --sidebar-bg: #0c0a1d;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            min-height: 100vh;
+            position: fixed;
+            left: 0; top: 0; bottom: 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s;
+        }
+
+        .sidebar-header {
+            padding: 24px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-header h1 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-header h1 .icon { font-size: 24px; }
+        .sidebar-header p { font-size: 12px; color: var(--primary-light); margin-top: 4px; }
+
+        .sidebar-nav { padding: 16px 12px; flex: 1; overflow-y: auto; }
+
+        .nav-section { margin-bottom: 24px; }
+
+        .nav-section-title {
+            font-size: 11px; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 1px; color: var(--primary-light);
+            padding: 0 8px; margin-bottom: 8px;
+        }
+
+        .nav-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 12px; border-radius: 8px; cursor: pointer;
+            font-size: 14px; transition: all 0.2s;
+            color: var(--sidebar-text); text-decoration: none;
+        }
+
+        .nav-item:hover { background: rgba(255,255,255,0.1); }
+        .nav-item.active { background: var(--primary); color: #fff; }
+        .nav-item .badge {
+            margin-left: auto; background: rgba(255,255,255,0.15);
+            padding: 2px 8px; border-radius: 10px; font-size: 11px;
+        }
+        .nav-item.active .badge { background: rgba(255,255,255,0.2); }
+
+        /* Main Content */
+        .main-content { margin-left: 260px; flex: 1; min-height: 100vh; }
+
+        /* Top Bar */
+        .topbar {
+            background: var(--card-bg); border-bottom: 1px solid var(--border);
+            padding: 16px 32px; display: flex; align-items: center; gap: 16px;
+            position: sticky; top: 0; z-index: 50; transition: background 0.3s;
+        }
+
+        .search-box { flex: 1; max-width: 480px; position: relative; }
+
+        .search-box input {
+            width: 100%; padding: 10px 16px 10px 40px;
+            border: 1px solid var(--border); border-radius: 10px;
+            font-size: 14px; outline: none; transition: all 0.2s;
+            background: var(--bg); color: var(--text);
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+        }
+
+        .search-box::before {
+            content: "\1F50D"; position: absolute; left: 14px; top: 50%;
+            transform: translateY(-50%); font-size: 14px;
+        }
+
+        .topbar-actions { display: flex; gap: 8px; margin-left: auto; align-items: center; }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            width: 40px; height: 40px; border-radius: 10px;
+            border: 1px solid var(--border); background: var(--card-bg);
+            cursor: pointer; font-size: 18px; display: flex;
+            align-items: center; justify-content: center;
+            transition: all 0.2s; color: var(--text);
+        }
+        .theme-toggle:hover { background: var(--hover-bg); }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 20px; border: none; border-radius: 8px;
+            font-size: 14px; font-weight: 500; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-primary:hover { background: var(--primary-dark); }
+
+        .btn-outline {
+            background: transparent; border: 1px solid var(--border); color: var(--text);
+        }
+        .btn-outline:hover { background: var(--hover-bg); }
+
+        .btn-sm { padding: 6px 12px; font-size: 13px; }
+        .btn-success { background: var(--success); color: #fff; }
+        .btn-success:hover { opacity: 0.9; }
+        .btn-danger { background: var(--danger); color: #fff; }
+        .btn-danger:hover { opacity: 0.9; }
+
+        /* Page Content */
+        .page-content { padding: 32px; }
+
+        .page-header { margin-bottom: 24px; }
+        .page-header h2 { font-size: 24px; font-weight: 700; color: var(--text); }
+        .page-header p { color: var(--text-secondary); margin-top: 4px; }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px; margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--card-bg); border-radius: 12px;
+            padding: 20px; border: 1px solid var(--border); transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+        }
+        .stat-card[onclick]:hover {
+            transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .stat-card .stat-icon {
+            width: 40px; height: 40px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; margin-bottom: 12px;
+        }
+
+        .stat-card .stat-value { font-size: 28px; font-weight: 700; }
+        .stat-card .stat-label { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+
+        /* Filters */
+        .filters-bar {
+            display: flex; gap: 12px; margin-bottom: 24px;
+            flex-wrap: wrap; align-items: center;
+        }
+
+        .filter-group { display: flex; align-items: center; gap: 8px; }
+        .filter-group label { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+
+        select, .filter-input {
+            padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px;
+            font-size: 13px; background: var(--input-bg); color: var(--text);
+            cursor: pointer; outline: none;
+        }
+        select:focus, .filter-input:focus { border-color: var(--primary); }
+
+        /* Employee Cards */
+        .employees-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 20px;
+        }
+
+        .employee-card {
+            background: var(--card-bg); border-radius: 12px;
+            border: 1px solid var(--border); overflow: hidden;
+            transition: all 0.2s; cursor: pointer;
+        }
+
+        .employee-card:hover {
+            border-color: var(--primary-light);
+            box-shadow: 0 4px 20px rgba(79,70,229,0.1);
+            transform: translateY(-2px);
+        }
+
+        .employee-card-header {
+            padding: 20px; display: flex; align-items: center; gap: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .avatar {
+            width: 48px; height: 48px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; font-weight: 700; color: #fff; flex-shrink: 0;
+        }
+
+        .employee-info h3 { font-size: 15px; font-weight: 600; }
+        .employee-info .meta {
+            display: flex; gap: 12px; margin-top: 4px;
+            font-size: 12px; color: var(--text-secondary);
+        }
+
+        .employee-info .meta span { display: flex; align-items: center; gap: 4px; }
+
+        .employee-card-body { padding: 16px 20px; }
+
+        .skill-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+
+        .skill-chip {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500;
+        }
+
+        .skill-chip.expert { background: #d1fae5; color: #065f46; }
+        .skill-chip.intermediate { background: #dbeafe; color: #1e40af; }
+        .skill-chip.basic { background: #fef3c7; color: #92400e; }
+        .skill-chip.none { background: #f1f5f9; color: #64748b; }
+
+        [data-theme="dark"] .skill-chip.expert { background: #064e3b; color: #6ee7b7; }
+        [data-theme="dark"] .skill-chip.intermediate { background: #1e3a5f; color: #93c5fd; }
+        [data-theme="dark"] .skill-chip.basic { background: #451a03; color: #fcd34d; }
+        [data-theme="dark"] .skill-chip.none { background: #334155; color: #94a3b8; }
+
+        .skill-chip .dot { width: 6px; height: 6px; border-radius: 50%; }
+        .skill-chip.expert .dot { background: var(--prof-expert); }
+        .skill-chip.intermediate .dot { background: var(--prof-intermediate); }
+        .skill-chip.basic .dot { background: var(--prof-basic); }
+
+        .employee-card-footer {
+            padding: 12px 20px; border-top: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .dept-badge {
+            padding: 4px 10px; border-radius: 6px; font-size: 11px;
+            font-weight: 600; text-transform: uppercase;
+        }
+
+        .dept-badge.dev { background: #ede9fe; color: #5b21b6; }
+        .dept-badge.qa { background: #fce7f3; color: #9d174d; }
+        .dept-badge.cloud { background: #e0f2fe; color: #0369a1; }
+        .dept-badge.design { background: #fef3c7; color: #92400e; }
+        .dept-badge.project-management { background: #d1fae5; color: #065f46; }
+        .dept-badge.product-management { background: #e0e7ff; color: #3730a3; }
+        .dept-badge.technical-writing { background: #fce7f3; color: #831843; }
+        .dept-badge.product-marketing { background: #ffedd5; color: #9a3412; }
+        .dept-badge.eit { background: #f0fdf4; color: #166534; }
+
+        [data-theme="dark"] .dept-badge.dev { background: #2e1065; color: #c4b5fd; }
+        [data-theme="dark"] .dept-badge.qa { background: #500724; color: #f9a8d4; }
+        [data-theme="dark"] .dept-badge.cloud { background: #082f49; color: #7dd3fc; }
+        [data-theme="dark"] .dept-badge.design { background: #451a03; color: #fcd34d; }
+        [data-theme="dark"] .dept-badge.project-management { background: #064e3b; color: #6ee7b7; }
+        [data-theme="dark"] .dept-badge.product-management { background: #1e1b4b; color: #a5b4fc; }
+        [data-theme="dark"] .dept-badge.technical-writing { background: #500724; color: #fbcfe8; }
+        [data-theme="dark"] .dept-badge.product-marketing { background: #431407; color: #fdba74; }
+        [data-theme="dark"] .dept-badge.eit { background: #052e16; color: #86efac; }
+
+        .skill-count { font-size: 12px; color: var(--text-secondary); }
+
+        .section { display: none; }
+        .section.active { display: block; }
+
+        /* Modal */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.5); z-index: 200;
+            justify-content: center; align-items: flex-start;
+            padding: 40px; overflow-y: auto;
+        }
+        .modal-overlay.open { display: flex; }
+
+        .modal {
+            background: var(--card-bg); border-radius: 16px;
+            width: 100%; max-width: 800px; max-height: 90vh;
+            overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            transition: background 0.3s;
+        }
+
+        .modal-header {
+            padding: 24px 28px; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; background: var(--card-bg);
+            border-radius: 16px 16px 0 0; z-index: 1;
+        }
+
+        .modal-header h2 { font-size: 20px; }
+
+        .modal-close {
+            width: 36px; height: 36px; border-radius: 8px; border: none;
+            background: var(--hover-bg); cursor: pointer; font-size: 18px;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s; color: var(--text);
+        }
+        .modal-close:hover { background: var(--border); }
+
+        .modal-body { padding: 28px; }
+
+        .detail-profile {
+            display: flex; align-items: center; gap: 20px; margin-bottom: 28px;
+        }
+
+        .detail-avatar {
+            width: 72px; height: 72px; border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 28px; font-weight: 700; color: #fff;
+        }
+
+        .detail-info h3 { font-size: 22px; font-weight: 700; }
+        .detail-info .detail-meta {
+            display: flex; gap: 16px; margin-top: 6px;
+            font-size: 14px; color: var(--text-secondary); flex-wrap: wrap;
+        }
+
+        .skill-category { margin-bottom: 20px; }
+        .skill-category h4 {
+            font-size: 14px; font-weight: 600; color: var(--text-secondary);
+            margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+
+        .skill-table { width: 100%; border-collapse: collapse; }
+        .skill-table th, .skill-table td {
+            padding: 10px 14px; text-align: left;
+            border-bottom: 1px solid var(--border); font-size: 14px;
+        }
+        .skill-table th {
+            font-weight: 600; color: var(--text-secondary);
+            font-size: 12px; text-transform: uppercase;
+        }
+
+        .prof-bar { display: flex; align-items: center; gap: 8px; }
+        .prof-bar .bar {
+            height: 6px; border-radius: 3px; flex: 1;
+            max-width: 80px; background: var(--border); overflow: hidden;
+        }
+        .prof-bar .bar .fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+        .prof-bar .bar .fill.expert { width: 100%; background: var(--prof-expert); }
+        .prof-bar .bar .fill.intermediate { width: 66%; background: var(--prof-intermediate); }
+        .prof-bar .bar .fill.basic { width: 33%; background: var(--prof-basic); }
+
+        .prof-label { font-size: 12px; font-weight: 500; min-width: 80px; }
+        .prof-label.expert { color: var(--prof-expert); }
+        .prof-label.intermediate { color: var(--prof-intermediate); }
+        .prof-label.basic { color: var(--prof-basic); }
+
+        .certs-list { list-style: none; }
+        .certs-list li {
+            padding: 8px 12px; background: var(--hover-bg);
+            border-radius: 8px; margin-bottom: 6px; font-size: 13px;
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        /* Forms */
+        .form-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+        }
+
+        .form-group { margin-bottom: 16px; }
+        .form-group.full-width { grid-column: 1 / -1; }
+        .form-group label {
+            display: block; font-size: 13px; font-weight: 600;
+            color: var(--text); margin-bottom: 6px;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 10px 14px; border: 1px solid var(--border);
+            border-radius: 8px; font-size: 14px; outline: none;
+            transition: all 0.2s; background: var(--input-bg); color: var(--text);
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+        }
+
+        .skill-entry-row {
+            display: flex; gap: 8px; align-items: center; margin-bottom: 8px;
+        }
+
+        .skill-entry-row input, .skill-entry-row select {
+            flex: 1; padding: 8px 10px; border: 1px solid var(--border);
+            border-radius: 6px; font-size: 13px; outline: none;
+            background: var(--input-bg); color: var(--text);
+        }
+        .skill-entry-row .skill-select { flex: 2; }
+        .skill-entry-row input:focus, .skill-entry-row select:focus { border-color: var(--primary); }
+
+        .skill-entry-row .remove-btn {
+            width: 32px; height: 32px; border: none; border-radius: 6px;
+            background: #fee2e2; color: var(--danger); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; flex-shrink: 0;
+        }
+
+        [data-theme="dark"] .skill-entry-row .remove-btn { background: #450a0a; }
+
+        .add-skill-btn {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 6px 12px; border: 1px dashed var(--primary-light);
+            background: transparent; color: var(--primary);
+            border-radius: 6px; cursor: pointer; font-size: 13px; margin-top: 4px;
+        }
+        .add-skill-btn:hover { background: rgba(79,70,229,0.05); }
+
+        .custom-skill-note {
+            font-size: 12px; color: var(--text-secondary);
+            margin-top: 4px; margin-bottom: 8px; font-style: italic;
+        }
+
+        /* Reference */
+        .prof-ref-cards {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px; margin-bottom: 32px;
+        }
+
+        .prof-ref-card {
+            background: var(--card-bg); border: 2px solid var(--border);
+            border-radius: 12px; padding: 20px; text-align: center;
+            transition: background 0.3s;
+        }
+
+        .prof-ref-card.level-1 { border-color: var(--prof-none); }
+        .prof-ref-card.level-2 { border-color: var(--prof-basic); }
+        .prof-ref-card.level-3 { border-color: var(--prof-intermediate); }
+        .prof-ref-card.level-4 { border-color: var(--prof-expert); }
+
+        .prof-ref-card .level-number {
+            width: 40px; height: 40px; border-radius: 50%;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 10px;
+        }
+
+        .prof-ref-card.level-1 .level-number { background: var(--prof-none); }
+        .prof-ref-card.level-2 .level-number { background: var(--prof-basic); }
+        .prof-ref-card.level-3 .level-number { background: var(--prof-intermediate); }
+        .prof-ref-card.level-4 .level-number { background: var(--prof-expert); }
+
+        .prof-ref-card h4 { font-size: 16px; margin-bottom: 6px; }
+        .prof-ref-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+
+        .table-container {
+            background: var(--card-bg); border-radius: 12px;
+            border: 1px solid var(--border); overflow-x: auto; transition: background 0.3s;
+        }
+
+        .data-table { width: 100%; border-collapse: collapse; min-width: 900px; }
+        .data-table th {
+            background: var(--table-header); padding: 12px 16px; text-align: left;
+            font-size: 12px; font-weight: 600; text-transform: uppercase;
+            color: var(--text-secondary); position: sticky; top: 0;
+        }
+        .data-table td {
+            padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 14px;
+        }
+        .data-table tbody tr { cursor: pointer; transition: background 0.15s; }
+        .data-table tbody tr:hover { background: var(--hover-bg); }
+
+        .category-tabs {
+            display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 16px;
+            background: var(--hover-bg); padding: 4px; border-radius: 10px;
+        }
+
+        .category-tab {
+            padding: 6px 14px; border: none; background: transparent;
+            border-radius: 6px; font-size: 13px; cursor: pointer;
+            font-weight: 500; transition: all 0.2s; color: var(--text-secondary);
+        }
+        .category-tab.active { background: var(--primary); color: #fff; }
+        .category-tab:hover:not(.active) { background: var(--border); }
+
+        .view-toggle {
+            display: flex; background: var(--hover-bg); border-radius: 8px;
+            border: 1px solid var(--border); overflow: hidden;
+        }
+        .view-toggle button {
+            padding: 8px 14px; border: none; background: transparent;
+            cursor: pointer; font-size: 14px; transition: all 0.2s; color: var(--text);
+        }
+        .view-toggle button.active { background: var(--primary); color: #fff; }
+
+        /* Confirm Dialog */
+        .confirm-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.5); z-index: 300;
+            justify-content: center; align-items: center;
+        }
+        .confirm-overlay.open { display: flex; }
+
+        .confirm-dialog {
+            background: var(--card-bg); border-radius: 16px; padding: 28px;
+            width: 100%; max-width: 420px; text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .confirm-dialog .confirm-icon { font-size: 48px; margin-bottom: 16px; }
+        .confirm-dialog h3 { font-size: 18px; margin-bottom: 8px; }
+        .confirm-dialog p { color: var(--text-secondary); margin-bottom: 24px; font-size: 14px; }
+        .confirm-dialog .confirm-actions { display: flex; gap: 12px; justify-content: center; }
+
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 24px; right: 24px;
+            padding: 14px 24px; border-radius: 10px; color: #fff;
+            font-size: 14px; font-weight: 500; z-index: 400;
+            transform: translateY(100px); opacity: 0; transition: all 0.3s;
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.success { background: var(--success); }
+        .toast.error { background: var(--danger); }
+        .toast.info { background: var(--info); }
+
+        .empty-state {
+            text-align: center; padding: 60px 20px; color: var(--text-secondary);
+        }
+        .empty-state .empty-icon { font-size: 48px; margin-bottom: 16px; }
+        .empty-state h3 { font-size: 18px; color: var(--text); margin-bottom: 8px; }
+
+        .skills-section-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 0; border-bottom: 2px solid var(--primary-light);
+            margin-bottom: 4px; margin-top: 24px;
+        }
+        .skills-section-header h4 { font-size: 15px; color: var(--primary); font-weight: 600; }
+
+        .hamburger {
+            display: none; width: 36px; height: 36px; border: none;
+            background: transparent; cursor: pointer; font-size: 20px; color: var(--text);
+        }
+
+        /* Remove Employees */
+        .remove-card {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 12px; padding: 16px 20px; display: flex;
+            align-items: center; gap: 14px; margin-bottom: 12px;
+            transition: all 0.2s;
+        }
+        .remove-card:hover { border-color: var(--danger); }
+        .remove-card .emp-details { flex: 1; }
+        .remove-card .emp-details h4 { font-size: 14px; font-weight: 600; }
+        .remove-card .emp-details p { font-size: 12px; color: var(--text-secondary); }
+
+        /* Responsive */
+        @media (max-width: 1024px) { .employees-grid { grid-template-columns: 1fr; } }
+
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .page-content { padding: 16px; }
+            .topbar { padding: 12px 16px; }
+            .form-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .hamburger { display: flex; align-items: center; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h1><span class="icon">&#9889;</span> Upland Skill Matrix</h1>
+            <p>Software Engineering</p>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Main</div>
+                <a class="nav-item active" data-page="dashboard" onclick="showPage('dashboard')">&#128202; Dashboard</a>
+                <a class="nav-item" data-page="employees" onclick="showPage('employees')">&#128101; All Employees <span class="badge" id="empCount">0</span></a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Teams</div>
+                <a class="nav-item" data-page="dev" onclick="showPage('dev')">&#128187; Dev Team <span class="badge" id="devCount">0</span></a>
+                <a class="nav-item" data-page="qa" onclick="showPage('qa')">&#129514; QA Team <span class="badge" id="qaCount">0</span></a>
+                <a class="nav-item" data-page="cloud" onclick="showPage('cloud')">&#9729;&#65039; Cloud Ops <span class="badge" id="cloudCount">0</span></a>
+                <a class="nav-item" data-page="design" onclick="showPage('design')">&#127912; Design <span class="badge" id="designCount">0</span></a>
+                <a class="nav-item" data-page="project-mgmt" onclick="showPage('project-mgmt')">&#128203; Project Mgmt <span class="badge" id="pmCount">0</span></a>
+                <a class="nav-item" data-page="product-mgmt" onclick="showPage('product-mgmt')">&#128230; Product Mgmt <span class="badge" id="prodmgmtCount">0</span></a>
+                <a class="nav-item" data-page="tech-writing" onclick="showPage('tech-writing')">&#9999;&#65039; Tech Writing <span class="badge" id="twCount">0</span></a>
+                <a class="nav-item" data-page="product-mkt" onclick="showPage('product-mkt')">&#128227; Product Mktg <span class="badge" id="prodmktCount">0</span></a>
+                <a class="nav-item" data-page="eit" onclick="showPage('eit')">&#128295; EIT <span class="badge" id="eitCount">0</span></a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Reference</div>
+                <a class="nav-item" data-page="ref-proficiency" onclick="showPage('ref-proficiency')">&#128207; Proficiency Levels</a>
+                <a class="nav-item" data-page="ref-skills" onclick="showPage('ref-skills')">&#128203; Skill Reference</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Actions</div>
+                <a class="nav-item" data-page="add-employee" onclick="showPage('add-employee')">&#10133; Add Employee</a>
+                <a class="nav-item" data-page="remove-employee" onclick="showPage('remove-employee')">&#128465;&#65039; Remove Employee</a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <button class="hamburger" onclick="toggleSidebar()">&#9776;</button>
+            <div class="search-box">
+                <input type="text" id="globalSearch" placeholder="Search employees, skills, products..." oninput="handleSearch()">
+            </div>
+            <div class="topbar-actions">
+                <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle dark mode">&#127769;</button>
+                <div class="view-toggle" id="viewToggle" style="display: none;">
+                    <button class="active" onclick="setView('card')">&#127183;</button>
+                    <button onclick="setView('table')">&#128203;</button>
+                </div>
+                <button class="btn btn-primary" onclick="showPage('add-employee')">&#10133; Add Employee</button>
+            </div>
+        </header>
+
+        <div class="section active" id="page-dashboard">
+            <div class="page-content">
+                <div class="page-header"><h2>Dashboard</h2><p>Overview of skill distribution across the engineering organization</p></div>
+                <div class="stats-grid" id="statsGrid"></div>
+                <div class="page-header" style="margin-top:16px;"><h2>Top Skills Across Teams</h2></div>
+                <div id="topSkillsContainer"></div>
+            </div>
+        </div>
+
+        <div class="section" id="page-employees">
+            <div class="page-content">
+                <div class="page-header"><h2>All Employees</h2><p>Browse and search all team members</p></div>
+                <div class="filters-bar">
+                    <div class="filter-group"><label>Department:</label>
+                        <select id="filterDept" onchange="applyFilters()">
+                            <option value="">All</option><option value="Dev">Dev</option>
+                            <option value="QA">QA</option><option value="Cloud Ops">Cloud Ops</option>
+                            <option value="Design">Design</option><option value="Project Management">Project Mgmt</option>
+                            <option value="Product Management">Product Mgmt</option><option value="Technical Writing">Tech Writing</option>
+                            <option value="Product Marketing">Product Mktg</option><option value="EIT">EIT</option>
+                        </select>
+                    </div>
+                    <div class="filter-group"><label>Product:</label><select id="filterProduct" onchange="applyFilters()"></select></div>
+                    <div class="filter-group"><label>Skill:</label>
+                        <input type="text" class="filter-input" id="filterSkill" placeholder="Filter by skill..." oninput="applyFilters()">
+                    </div>
+                </div>
+                <div id="employeesContainer"></div>
+            </div>
+        </div>
+
+        <div class="section" id="page-dev">
+            <div class="page-content">
+                <div class="page-header"><h2>&#128187; Dev Team</h2><p>Development team members and their skills</p></div>
+                <div class="filters-bar"><div class="filter-group"><label>Product:</label><select id="filterDevProduct" onchange="applyTeamFilter('Dev')"></select></div></div>
+                <div id="devContainer"></div>
+            </div>
+        </div>
+
+        <div class="section" id="page-qa">
+            <div class="page-content">
+                <div class="page-header"><h2>&#129514; QA Team</h2><p>QA team members and their skills</p></div>
+                <div class="filters-bar"><div class="filter-group"><label>Product:</label><select id="filterQAProduct" onchange="applyTeamFilter('QA')"></select></div></div>
+                <div id="qaContainer"></div>
+            </div>
+        </div>
+
+        <div class="section" id="page-cloud">
+            <div class="page-content">
+                <div class="page-header"><h2>&#9729;&#65039; Cloud Ops Team</h2><p>Cloud operations team members</p></div>
+                <div class="filters-bar"><div class="filter-group"><label>Product:</label><select id="filterCloudProduct" onchange="applyTeamFilter('Cloud Ops')"></select></div></div>
+                <div id="cloudContainer"></div>
+            </div>
+        </div>
+
+        <div class="section" id="page-design">
+            <div class="page-content">
+                <div class="page-header"><h2>&#127912; Design Team</h2><p>Design team members and their skills</p></div>
+                <div class="filters-bar"><div class="filter-group"><label>Product:</label><select id="filterDesignProduct" onchange="applyTeamFilter('Design')"></select></div></div>
+                <div id="designContainer"></div>
+            </div>
+        </div>
+
+        <div class="section" id="page-project-mgmt">
+            <div class="page-content">
+                <div class="page-header"><h2>&#128203; Project Management Team</h2><p>Project management team members and their skills</p></div>
+                <div class="filters-bar"><div class="filter-group"><label>Product:</label><select id="filterPMProduct" onchange="applyTeamFilterById('Project Management','filterPMProduct','pmContainer')"></select></div></div>
+                <div id="pmContainer"></div>
+            </div>
+        </div>
+
+        <div class="section" id="page-product-mgmt">
+            <div class="page-content">
+                <div class="page-header"><h2>&#128230; Product Management Team</h2><p>Product management team members and their skills</p></div>
+                <div class="filters-bar"><div class="filter-group"><label>Product:</label><select id="filterProdMgmtProduct" onchange="applyTeamFilterById('Product Management','filterProdMgmtProduct','prodmgmtContainer')"></select></div></div>
+                <div id="prodmgmtContainer"></div>
+            </div>
+        </div>
+
+        <div class="section" id="page-tech-writing">
+            <div class="page-content">
+                <div class="page-header"><h2>&#9999;&#65039; Technical Writing Team</h2><p>Technical writing team members and their skills</p></div>
+                <div class="filters-bar"><div class="filter-group"><label>Product:</label><select id="filterTWProduct" onchange="applyTeamFilterById('Technical Writing','filterTWProduct','twContainer')"></select></div></div>
+                <div id="twContainer"></div>
+            </div>
+        </div>
+
+        <div class="section" id="page-product-mkt">
+            <div class="page-content">
+                <div class="page-header"><h2>&#128227; Product Marketing Team</h2><p>Product marketing team members and their skills</p></div>
+                <div class="filters-bar"><div class="filter-group"><label>Product:</label><select id="filterProdMktProduct" onchange="applyTeamFilterById('Product Marketing','filterProdMktProduct','prodmktContainer')"></select></div></div>
+                <div id="prodmktContainer"></div>
+            </div>
+        </div>
+
+        <div class="section" id="page-eit">
+            <div class="page-content">
+                <div class="page-header"><h2>&#128295; EIT Team</h2><p>EIT team members and their skills</p></div>
+                <div id="eitContainer"></div>
+            </div>
+        </div>
+
+        <div class="section" id="page-ref-proficiency">
+            <div class="page-content">
+                <div class="page-header"><h2>&#128207; Proficiency Levels Reference</h2><p>Use this guide to assess your proficiency level for each skill</p></div>
+                <div class="prof-ref-cards" id="profRefCards"></div>
+            </div>
+        </div>
+
+        <div class="section" id="page-ref-skills">
+            <div class="page-content">
+                <div class="page-header"><h2>&#128203; Skill Reference Guide</h2><p>Reference list of recognized skills by category (Dev &amp; QA). Add custom skills here first &mdash; they will then appear in the employee form.</p></div>
+                <div style="background:var(--card-bg);border-radius:12px;border:1px solid var(--border);padding:20px;margin-bottom:24px;transition:background 0.3s;">
+                    <h3 style="font-size:15px;margin-bottom:12px;">&#10133; Add Custom Skill to Reference List</h3>
+                    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
+                        <div class="form-group" style="margin-bottom:0;flex:1;min-width:200px;"><label>Category</label>
+                            <select id="refAddCategory" onchange="updateRefAddSkillHint()"></select>
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;flex:1;min-width:200px;"><label>Skill Name</label>
+                            <input type="text" id="refAddSkillName" placeholder="Enter new skill name">
+                        </div>
+                        <button type="button" class="btn btn-success" onclick="addCustomSkillToRef()" style="height:42px;">&#10133; Add Skill</button>
+                    </div>
+                    <p style="font-size:12px;color:var(--text-secondary);margin-top:8px;">&#128161; After adding a skill here, go to Add/Edit Employee to use it in your profile.</p>
+                </div>
+                <div class="category-tabs" id="refCategoryTabs"></div>
+                <div id="refSkillsContainer"></div>
+            </div>
+        </div>
+
+        <div class="section" id="page-add-employee">
+            <div class="page-content">
+                <div class="page-header"><h2 id="formPageTitle">&#10133; Add / Update Employee</h2>
+                    <p>Enter your details and skill proficiency levels. Skills are loaded from the <a href="#" onclick="showPage('ref-skills');return false;" style="color:var(--primary);font-weight:600;">Skill Reference</a> list. To add a custom skill, first add it there, then come back here to use it.</p>
+                </div>
+                <div style="background:var(--card-bg);border-radius:12px;border:1px solid var(--border);padding:28px;transition:background 0.3s;">
+                    <form id="employeeForm" onsubmit="handleFormSubmit(event)">
+                        <div class="form-grid">
+                            <div class="form-group"><label>Full Name *</label><input type="text" id="formName" required placeholder="Enter your full name"></div>
+                            <div class="form-group"><label>Email *</label><input type="email" id="formEmail" required placeholder="your.email@company.com"></div>
+                            <div class="form-group"><label>Department *</label>
+                                <select id="formDept" required onchange="updateFormCategories()">
+                                    <option value="">Select department</option>
+                                    <option value="Dev">Dev</option><option value="QA">QA</option>
+                                    <option value="Cloud Ops">Cloud Ops</option>
+                                    <option value="Design">Design</option><option value="Project Management">Project Management</option>
+                                    <option value="Product Management">Product Management</option>
+                                    <option value="Technical Writing">Technical Writing</option>
+                                    <option value="Product Marketing">Product Marketing</option>
+                                    <option value="EIT">EIT</option>
+                                </select>
+                            </div>
+                            <div class="form-group"><label>Product / Team *</label><select id="formProduct" required></select></div>
+                        </div>
+                        <div id="formSkillsContainer"></div>
+                        <div class="form-group full-width" style="margin-top:24px;">
+                            <label>Certifications / Other Skills</label>
+                            <textarea id="formCerts" rows="3" placeholder="List any certifications, courses, or additional skills (comma-separated)"></textarea>
+                        </div>
+                        <div style="display:flex;gap:12px;margin-top:24px;">
+                            <button type="submit" class="btn btn-primary">&#128190; Save Employee</button>
+                            <button type="button" class="btn btn-outline" onclick="resetForm()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="page-remove-employee">
+            <div class="page-content">
+                <div class="page-header"><h2>&#128465;&#65039; Remove Employee</h2><p>Remove employees who have left the organization</p></div>
+                <div class="filters-bar">
+                    <div class="filter-group"><label>Search:</label>
+                        <input type="text" class="filter-input" id="removeSearch" placeholder="Search by name..." oninput="renderRemoveList()">
+                    </div>
+                </div>
+                <div id="removeContainer"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Detail Modal -->
+    <div class="modal-overlay" id="detailModal" onclick="closeModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 id="modalTitle">Employee Details</h2>
+                <div style="display:flex;gap:8px;">
+                    <button class="btn btn-sm btn-success" onclick="toggleAddSkillForm()">&#10133; Add Skill</button>
+                    <button class="btn btn-sm btn-outline" id="modalEditBtn" onclick="editEmployee()">&#9999;&#65039; Edit</button>
+                    <button class="btn btn-sm btn-danger" onclick="confirmRemoveFromModal()">&#128465;&#65039; Remove</button>
+                    <button class="modal-close" onclick="closeDetailModal()">&#10005;</button>
+                </div>
+            </div>
+            <div id="addSkillFormContainer" style="display:none;border-bottom:1px solid var(--border);padding:16px 28px;background:var(--hover-bg);">
+                <h4 style="font-size:14px;margin-bottom:12px;color:var(--primary);">&#10133; Add New Skill</h4>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">
+                    <div class="form-group" style="margin-bottom:0;flex:1;min-width:150px;">
+                        <label>Category</label>
+                        <select id="modalSkillCategory"></select>
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;flex:1.5;min-width:180px;">
+                        <label>Skill Name</label>
+                        <input type="text" id="modalSkillName" placeholder="Enter skill name">
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;flex:1;min-width:140px;">
+                        <label>Proficiency</label>
+                        <select id="modalSkillProf">
+                            <option value="">Select</option>
+                            <option value="Beginner">Beginner</option>
+                            <option value="Basic">Basic</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Advanced">Advanced</option>
+                            <option value="Expert">Expert</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary btn-sm" onclick="saveModalSkill()" style="height:38px;">&#128190; Save Skill</button>
+                    <button class="btn btn-outline btn-sm" onclick="toggleAddSkillForm()" style="height:38px;">Cancel</button>
+                </div>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Confirm Dialog -->
+    <div class="confirm-overlay" id="confirmDialog" onclick="closeConfirm(event)">
+        <div class="confirm-dialog" onclick="event.stopPropagation()">
+            <div class="confirm-icon">&#9888;&#65039;</div>
+            <h3 id="confirmTitle">Confirm Removal</h3>
+            <p id="confirmMessage">Are you sure you want to remove this employee?</p>
+            <div class="confirm-actions">
+                <button class="btn btn-outline" onclick="closeConfirmDialog()">Cancel</button>
+                <button class="btn btn-danger" id="confirmActionBtn" onclick="executeRemove()">Remove</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        let appData = null;
+        let currentView = 'card';
+        let currentEmployeeId = null;
+        let pendingRemoveName = null;
+
+        // ==================== THEME ====================
+        function initTheme() {
+            const stored = localStorage.getItem('skillmatrix-theme');
+            if (stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.getElementById('themeToggle').textContent = '\u2600\ufe0f';
+            }
+        }
+
+        function toggleTheme() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+                document.documentElement.removeAttribute('data-theme');
+                document.getElementById('themeToggle').textContent = '\uD83C\uDF19';
+                localStorage.setItem('skillmatrix-theme', 'light');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.getElementById('themeToggle').textContent = '\u2600\ufe0f';
+                localStorage.setItem('skillmatrix-theme', 'dark');
+            }
+        }
+
+        initTheme();
+
+        // ==================== LOAD DATA ====================
+        async function loadData() {
+            try {
+                const resp = await fetch('data.json');
+                appData = await resp.json();
+
+                const local = localStorage.getItem('skillmatrix-data');
+                if (local) {
+                    try {
+                        const ld = JSON.parse(local);
+                        if (ld.addedEmployees) {
+                            ld.addedEmployees.forEach(emp => {
+                                const idx = appData.employees.findIndex(e => e.name === emp.name);
+                                if (idx >= 0) appData.employees[idx] = emp;
+                                else appData.employees.push(emp);
+                            });
+                        }
+                        if (ld.removedEmployees) {
+                            appData.employees = appData.employees.filter(e => !ld.removedEmployees.includes(e.name));
+                        }
+                    } catch(e) { console.warn('Local data parse error', e); }
+                }
+                initApp();
+            } catch (e) {
+                console.error('Failed to load data:', e);
+                document.getElementById('page-dashboard').innerHTML =
+                    '<div class="page-content"><div class="empty-state"><div class="empty-icon">\u26a0\ufe0f</div><h3>Failed to load data</h3><p>Make sure data.json is in the same folder and served via HTTP.</p></div></div>';
+            }
+        }
+
+        function addLocalEmployee(emp) {
+            const local = JSON.parse(localStorage.getItem('skillmatrix-data') || '{"addedEmployees":[],"removedEmployees":[]}');
+            const idx = local.addedEmployees.findIndex(e => e.name === emp.name);
+            if (idx >= 0) local.addedEmployees[idx] = emp;
+            else local.addedEmployees.push(emp);
+            local.removedEmployees = local.removedEmployees.filter(n => n !== emp.name);
+            localStorage.setItem('skillmatrix-data', JSON.stringify(local));
+        }
+
+        function removeLocalEmployee(name) {
+            const local = JSON.parse(localStorage.getItem('skillmatrix-data') || '{"addedEmployees":[],"removedEmployees":[]}');
+            if (!local.removedEmployees.includes(name)) local.removedEmployees.push(name);
+            local.addedEmployees = local.addedEmployees.filter(e => e.name !== name);
+            localStorage.setItem('skillmatrix-data', JSON.stringify(local));
+        }
+
+        function initApp() {
+            mergeCustomSkills();
+            updateCounts();
+            populateProductFilters();
+            renderDashboard();
+            renderAllViews();
+            renderProficiencyRef();
+            renderSkillRef();
+            populateFormProducts();
+            renderRemoveList();
+        }
+
+        function mergeCustomSkills() {
+            var custom = JSON.parse(localStorage.getItem('skillmatrix-custom-skills') || '{}');
+            Object.keys(custom).forEach(function(key) {
+                var parts = key.split(': ');
+                var scope = parts[0];
+                var category = parts.slice(1).join(': ');
+                var src = scope === 'Dev' ? appData.reference.dev : appData.reference.qa;
+                if (!src) return;
+                if (!src[category]) src[category] = [];
+                custom[key].forEach(function(skill) {
+                    if (src[category].indexOf(skill) < 0) src[category].push(skill);
+                });
+            });
+        }
+
+        function updateCounts() {
+            document.getElementById('empCount').textContent = appData.employees.length;
+            document.getElementById('devCount').textContent = appData.employees.filter(e => e.department === 'Dev').length;
+            document.getElementById('qaCount').textContent = appData.employees.filter(e => e.department === 'QA').length;
+            document.getElementById('cloudCount').textContent = appData.employees.filter(e => e.department === 'Cloud Ops').length;
+            document.getElementById('designCount').textContent = appData.employees.filter(e => e.department === 'Design').length;
+            document.getElementById('pmCount').textContent = appData.employees.filter(e => e.department === 'Project Management').length;
+            document.getElementById('prodmgmtCount').textContent = appData.employees.filter(e => e.department === 'Product Management').length;
+            document.getElementById('twCount').textContent = appData.employees.filter(e => e.department === 'Technical Writing').length;
+            document.getElementById('prodmktCount').textContent = appData.employees.filter(e => e.department === 'Product Marketing').length;
+            document.getElementById('eitCount').textContent = appData.employees.filter(e => e.department === 'EIT').length;
+        }
+
+        function renderAllViews() {
+            renderEmployees(appData.employees, 'employeesContainer');
+            renderEmployees(appData.employees.filter(e => e.department === 'Dev'), 'devContainer');
+            renderEmployees(appData.employees.filter(e => e.department === 'QA'), 'qaContainer');
+            renderEmployees(appData.employees.filter(e => e.department === 'Cloud Ops'), 'cloudContainer');
+            renderEmployees(appData.employees.filter(e => e.department === 'Design'), 'designContainer');
+            renderEmployees(appData.employees.filter(e => e.department === 'Project Management'), 'pmContainer');
+            renderEmployees(appData.employees.filter(e => e.department === 'Product Management'), 'prodmgmtContainer');
+            renderEmployees(appData.employees.filter(e => e.department === 'Technical Writing'), 'twContainer');
+            renderEmployees(appData.employees.filter(e => e.department === 'Product Marketing'), 'prodmktContainer');
+            renderEmployees(appData.employees.filter(e => e.department === 'EIT'), 'eitContainer');
+        }
+
+        // ==================== NAVIGATION ====================
+        function showPage(page) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById('page-' + page).classList.add('active');
+            const nav = document.querySelector('.nav-item[data-page="' + page + '"]');
+            if (nav) nav.classList.add('active');
+            document.getElementById('viewToggle').style.display = ['employees','dev','qa','cloud','design','project-mgmt','product-mgmt','tech-writing','product-mkt','eit'].includes(page) ? 'flex' : 'none';
+            document.getElementById('sidebar').classList.remove('open');
+            if (page === 'remove-employee') renderRemoveList();
+        }
+
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+
+        function setView(view) {
+            currentView = view;
+            document.querySelectorAll('#viewToggle button').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAllViews();
+            applyFilters();
+        }
+
+        // ==================== UTILS ====================
+        const avatarColors = ['#6366f1','#8b5cf6','#ec4899','#f43f5e','#f97316','#eab308','#22c55e','#14b8a6','#06b6d4','#3b82f6'];
+
+        function getAvatarColor(name) {
+            let h = 0;
+            for (let c of name) h = c.charCodeAt(0) + ((h << 5) - h);
+            return avatarColors[Math.abs(h) % avatarColors.length];
+        }
+
+        function getInitials(name) {
+            return name.split(' ').filter(Boolean).map(w => w[0]).slice(0, 2).join('').toUpperCase();
+        }
+
+        function profClass(prof) {
+            const p = (prof || '').toLowerCase();
+            if (p === 'expert') return 'expert';
+            if (p === 'intermediate' || p === 'advanced') return 'intermediate';
+            if (p === 'basic') return 'basic';
+            return 'none';
+        }
+
+        function deptClass(dept) {
+            var map = {
+                'Dev': 'dev', 'QA': 'qa', 'Cloud Ops': 'cloud',
+                'Design': 'design', 'Project Management': 'project-management',
+                'Product Management': 'product-management', 'Technical Writing': 'technical-writing',
+                'Product Marketing': 'product-marketing', 'EIT': 'eit'
+            };
+            return map[dept] || 'cloud';
+        }
+
+        function getAllSkills(emp) {
+            const all = [];
+            Object.values(emp.skills).forEach(cat => cat.forEach(s => all.push(s)));
+            return all;
+        }
+
+        function escAttr(s) {
+            return s.replace(/&/g,'&amp;').replace(/'/g,'&#39;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        }
+
+        function escHtml(s) {
+            return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+
+        // ==================== DASHBOARD ====================
+        function renderDashboard() {
+            const total = appData.employees.length;
+            const dev = appData.employees.filter(e => e.department === 'Dev').length;
+            const qa = appData.employees.filter(e => e.department === 'QA').length;
+            const cloud = appData.employees.filter(e => e.department === 'Cloud Ops').length;
+            const design = appData.employees.filter(e => e.department === 'Design').length;
+            const pm = appData.employees.filter(e => e.department === 'Project Management').length;
+            const prodmgmt = appData.employees.filter(e => e.department === 'Product Management').length;
+            const tw = appData.employees.filter(e => e.department === 'Technical Writing').length;
+            const prodmkt = appData.employees.filter(e => e.department === 'Product Marketing').length;
+            const eit = appData.employees.filter(e => e.department === 'EIT').length;
+            const products = appData.products.length;
+
+            const allSkills = new Set();
+            appData.employees.forEach(e => Object.values(e.skills).forEach(cat => cat.forEach(s => allSkills.add(s.skill))));
+
+            document.getElementById('statsGrid').innerHTML =
+                '<div class="stat-card" style="cursor:pointer;" onclick="showPage(\'employees\')"><div class="stat-icon" style="background:#ede9fe;">\uD83D\uDC65</div><div class="stat-value">' + total + '</div><div class="stat-label">Total Employees</div></div>' +
+                '<div class="stat-card" style="cursor:pointer;" onclick="showPage(\'dev\')"><div class="stat-icon" style="background:#dbeafe;">\uD83D\uDCBB</div><div class="stat-value">' + dev + '</div><div class="stat-label">Developers</div></div>' +
+                '<div class="stat-card" style="cursor:pointer;" onclick="showPage(\'qa\')"><div class="stat-icon" style="background:#fce7f3;">\uD83E\uDDEA</div><div class="stat-value">' + qa + '</div><div class="stat-label">QA Engineers</div></div>' +
+                '<div class="stat-card" style="cursor:pointer;" onclick="showPage(\'cloud\')"><div class="stat-icon" style="background:#e0f2fe;">\u2601\ufe0f</div><div class="stat-value">' + cloud + '</div><div class="stat-label">Cloud Ops</div></div>' +
+                '<div class="stat-card" style="cursor:pointer;" onclick="showPage(\'design\')"><div class="stat-icon" style="background:#fef3c7;">\uD83C\uDFA8</div><div class="stat-value">' + design + '</div><div class="stat-label">Design</div></div>' +
+                '<div class="stat-card" style="cursor:pointer;" onclick="showPage(\'project-mgmt\')"><div class="stat-icon" style="background:#d1fae5;">\uD83D\uDCCB</div><div class="stat-value">' + pm + '</div><div class="stat-label">Project Mgmt</div></div>' +
+                '<div class="stat-card" style="cursor:pointer;" onclick="showPage(\'product-mgmt\')"><div class="stat-icon" style="background:#e0e7ff;">\uD83D\uDCE6</div><div class="stat-value">' + prodmgmt + '</div><div class="stat-label">Product Mgmt</div></div>' +
+                '<div class="stat-card" style="cursor:pointer;" onclick="showPage(\'tech-writing\')"><div class="stat-icon" style="background:#fce7f3;">\u270F\ufe0f</div><div class="stat-value">' + tw + '</div><div class="stat-label">Tech Writing</div></div>' +
+                '<div class="stat-card" style="cursor:pointer;" onclick="showPage(\'product-mkt\')"><div class="stat-icon" style="background:#ffedd5;">\uD83D\uDCE3</div><div class="stat-value">' + prodmkt + '</div><div class="stat-label">Product Mktg</div></div>' +
+                '<div class="stat-card" style="cursor:pointer;" onclick="showPage(\'eit\')"><div class="stat-icon" style="background:#f0fdf4;">\uD83D\uDD27</div><div class="stat-value">' + eit + '</div><div class="stat-label">EIT</div></div>' +
+                '<div class="stat-card"><div class="stat-icon" style="background:#fef3c7;">\uD83D\uDCE6</div><div class="stat-value">' + products + '</div><div class="stat-label">Products</div></div>' +
+                '<div class="stat-card"><div class="stat-icon" style="background:#d1fae5;">\u2699\ufe0f</div><div class="stat-value">' + allSkills.size + '</div><div class="stat-label">Unique Skills</div></div>';
+
+            const sc = {};
+            appData.employees.forEach(e => {
+                Object.values(e.skills).forEach(cat => {
+                    cat.forEach(s => {
+                        if (!sc[s.skill]) sc[s.skill] = { total: 0, expert: 0, intermediate: 0, basic: 0 };
+                        sc[s.skill].total++;
+                        const p = profClass(s.proficiency);
+                        if (sc[s.skill][p] !== undefined) sc[s.skill][p]++;
+                    });
+                });
+            });
+
+            const topSkills = Object.entries(sc).sort((a, b) => b[1].total - a[1].total).slice(0, 15);
+            let html = '<div class="table-container"><table class="data-table"><thead><tr><th>Skill</th><th>Total</th><th>Expert</th><th>Intermediate</th><th>Basic</th><th>Distribution</th></tr></thead><tbody>';
+            topSkills.forEach(function(item) {
+                var skill = item[0], d = item[1], mw = 200;
+                html += '<tr><td><strong>' + escHtml(skill) + '</strong></td><td>' + d.total + '</td>' +
+                    '<td style="color:var(--prof-expert)">' + d.expert + '</td>' +
+                    '<td style="color:var(--prof-intermediate)">' + d.intermediate + '</td>' +
+                    '<td style="color:var(--prof-basic)">' + d.basic + '</td>' +
+                    '<td><div style="display:flex;gap:2px;height:8px;border-radius:4px;overflow:hidden;background:var(--border);width:' + mw + 'px;">' +
+                    '<div style="width:' + ((d.expert / d.total) * mw) + 'px;background:var(--prof-expert);"></div>' +
+                    '<div style="width:' + ((d.intermediate / d.total) * mw) + 'px;background:var(--prof-intermediate);"></div>' +
+                    '<div style="width:' + ((d.basic / d.total) * mw) + 'px;background:var(--prof-basic);"></div>' +
+                    '</div></td></tr>';
+            });
+            html += '</tbody></table></div>';
+            document.getElementById('topSkillsContainer').innerHTML = html;
+        }
+
+        // ==================== EMPLOYEES ====================
+        function renderEmployees(employees, containerId) {
+            var container = document.getElementById(containerId);
+            if (!employees.length) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-icon">\uD83D\uDD0D</div><h3>No employees found</h3><p>Try adjusting your filters</p></div>';
+                return;
+            }
+            currentView === 'table' ? renderTableView(employees, container) : renderCardView(employees, container);
+        }
+
+        function renderCardView(employees, container) {
+            var html = '<div class="employees-grid">';
+            employees.forEach(function(emp) {
+                var color = getAvatarColor(emp.name);
+                var initials = getInitials(emp.name);
+                var dc = deptClass(emp.department);
+                var allS = getAllSkills(emp);
+                var sorted = allS.slice().sort(function(a, b) {
+                    var order = { Expert: 0, Intermediate: 1, Basic: 2 };
+                    return (order[a.proficiency] || 3) - (order[b.proficiency] || 3);
+                });
+                var topS = sorted.slice(0, 6);
+                var chips = topS.map(function(s) {
+                    return '<span class="skill-chip ' + profClass(s.proficiency) + '"><span class="dot"></span>' + escHtml(s.skill) + '</span>';
+                }).join('');
+                var more = allS.length - topS.length;
+                html += '<div class="employee-card" onclick="showEmployeeDetail(\'' + escAttr(emp.name) + '\')">' +
+                    '<div class="employee-card-header">' +
+                    '<div class="avatar" style="background:' + color + '">' + initials + '</div>' +
+                    '<div class="employee-info"><h3>' + escHtml(emp.name) + '</h3>' +
+                    '<div class="meta"><span>\uD83D\uDCE6 ' + escHtml(emp.product || 'N/A') + '</span><span>\uD83D\uDCE7 ' + escHtml(emp.email ? emp.email.split('@')[0] : 'N/A') + '</span></div>' +
+                    '</div></div>' +
+                    '<div class="employee-card-body"><div class="skill-chips">' + chips + (more > 0 ? '<span class="skill-chip none">+' + more + ' more</span>' : '') + '</div></div>' +
+                    '<div class="employee-card-footer"><span class="dept-badge ' + dc + '">' + escHtml(emp.department) + '</span><span class="skill-count">' + allS.length + ' skills</span></div>' +
+                    '</div>';
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function renderTableView(employees, container) {
+            var html = '<div class="table-container"><table class="data-table"><thead><tr><th>Name</th><th>Department</th><th>Product</th><th>Email</th><th>Top Skills</th><th>Total</th></tr></thead><tbody>';
+            employees.forEach(function(emp) {
+                var allS = getAllSkills(emp);
+                var topS = allS.slice(0, 4).map(function(s) {
+                    return '<span class="skill-chip ' + profClass(s.proficiency) + '" style="font-size:11px;padding:2px 8px;">' + escHtml(s.skill) + '</span>';
+                }).join('');
+                var dc = deptClass(emp.department);
+                html += '<tr onclick="showEmployeeDetail(\'' + escAttr(emp.name) + '\')"><td><strong>' + escHtml(emp.name) + '</strong></td>' +
+                    '<td><span class="dept-badge ' + dc + '">' + escHtml(emp.department) + '</span></td>' +
+                    '<td>' + escHtml(emp.product || '-') + '</td><td>' + escHtml(emp.email || '-') + '</td>' +
+                    '<td>' + topS + '</td><td>' + allS.length + '</td></tr>';
+            });
+            html += '</tbody></table></div>';
+            container.innerHTML = html;
+        }
+
+        // ==================== FILTERS ====================
+        function populateProductFilters() {
+            var opts = '<option value="">All Products</option>' + appData.products.map(function(p) { return '<option value="' + escAttr(p) + '">' + escHtml(p) + '</option>'; }).join('');
+            document.getElementById('filterProduct').innerHTML = opts;
+            document.getElementById('filterDevProduct').innerHTML = opts;
+            document.getElementById('filterQAProduct').innerHTML = opts;
+            document.getElementById('filterCloudProduct').innerHTML = opts;
+            document.getElementById('filterDesignProduct').innerHTML = opts;
+            document.getElementById('filterPMProduct').innerHTML = opts;
+            document.getElementById('filterProdMgmtProduct').innerHTML = opts;
+            document.getElementById('filterTWProduct').innerHTML = opts;
+            document.getElementById('filterProdMktProduct').innerHTML = opts;
+        }
+
+        function applyFilters() {
+            var dept = document.getElementById('filterDept').value;
+            var product = document.getElementById('filterProduct').value;
+            var skill = document.getElementById('filterSkill').value.toLowerCase();
+            var f = appData.employees;
+            if (dept) f = f.filter(function(e) { return e.department === dept; });
+            if (product) f = f.filter(function(e) { return e.product === product; });
+            if (skill) f = f.filter(function(e) { return Object.values(e.skills).some(function(cat) { return cat.some(function(s) { return s.skill.toLowerCase().indexOf(skill) >= 0; }); }); });
+            renderEmployees(f, 'employeesContainer');
+        }
+
+        function applyTeamFilter(dept) {
+            var filterMap = { 'Dev': 'filterDevProduct', 'QA': 'filterQAProduct', 'Cloud Ops': 'filterCloudProduct', 'Design': 'filterDesignProduct' };
+            var containerMap = { 'Dev': 'devContainer', 'QA': 'qaContainer', 'Cloud Ops': 'cloudContainer', 'Design': 'designContainer' };
+            var filterId = filterMap[dept];
+            var containerId = containerMap[dept];
+            if (!filterId || !containerId) return;
+            var product = document.getElementById(filterId).value;
+            var f = appData.employees.filter(function(e) { return e.department === dept; });
+            if (product) f = f.filter(function(e) { return e.product === product; });
+            renderEmployees(f, containerId);
+        }
+
+        function applyTeamFilterById(dept, filterId, containerId) {
+            var product = document.getElementById(filterId).value;
+            var f = appData.employees.filter(function(e) { return e.department === dept; });
+            if (product) f = f.filter(function(e) { return e.product === product; });
+            renderEmployees(f, containerId);
+        }
+
+        function handleSearch() {
+            var q = document.getElementById('globalSearch').value.toLowerCase();
+            if (!q) { showPage('employees'); applyFilters(); return; }
+            showPage('employees');
+            var f = appData.employees.filter(function(e) {
+                return e.name.toLowerCase().indexOf(q) >= 0 ||
+                    (e.product && e.product.toLowerCase().indexOf(q) >= 0) ||
+                    (e.email && e.email.toLowerCase().indexOf(q) >= 0) ||
+                    e.department.toLowerCase().indexOf(q) >= 0 ||
+                    Object.values(e.skills).some(function(cat) { return cat.some(function(s) { return s.skill.toLowerCase().indexOf(q) >= 0; }); });
+            });
+            renderEmployees(f, 'employeesContainer');
+        }
+
+        // ==================== DETAIL MODAL ====================
+        function showEmployeeDetail(name) {
+            var emp = appData.employees.find(function(e) { return e.name === name; });
+            if (!emp) return;
+            currentEmployeeId = name;
+            var color = getAvatarColor(emp.name);
+            var dc = deptClass(emp.department);
+
+            var html = '<div class="detail-profile">' +
+                '<div class="detail-avatar" style="background:' + color + '">' + getInitials(emp.name) + '</div>' +
+                '<div class="detail-info"><h3>' + escHtml(emp.name) + '</h3>' +
+                '<div class="detail-meta"><span>\uD83D\uDCE6 ' + escHtml(emp.product || 'N/A') + '</span><span>\uD83D\uDCE7 ' + escHtml(emp.email || 'N/A') + '</span>' +
+                '<span class="dept-badge ' + dc + '">' + escHtml(emp.department) + '</span></div></div></div>';
+
+            Object.keys(emp.skills).forEach(function(category) {
+                var skills = emp.skills[category];
+                if (!skills.length) return;
+                html += '<div class="skill-category"><h4>\uD83D\uDD27 ' + escHtml(category) + '</h4><table class="skill-table"><tr><th>Skill</th><th>Proficiency</th><th style="width:40px;"></th></tr>';
+                skills.forEach(function(s, idx) {
+                    var pc = profClass(s.proficiency);
+                    html += '<tr><td>' + escHtml(s.skill) + '</td><td><div class="prof-bar"><div class="bar"><div class="fill ' + pc + '"></div></div><span class="prof-label ' + pc + '">' + escHtml(s.proficiency) + '</span></div></td>' +
+                        '<td><button onclick="removeSkillFromEmployee(\'' + escAttr(emp.name) + '\',\'' + escAttr(category) + '\',' + idx + ')" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:16px;" title="Remove skill">\u2715</button></td></tr>';
+                });
+                html += '</table></div>';
+            });
+
+            if (emp.certifications && emp.certifications.length) {
+                html += '<div class="skill-category"><h4>\uD83C\uDFC6 Certifications & Other</h4><ul class="certs-list">';
+                emp.certifications.forEach(function(c) { html += '<li>\uD83C\uDF93 ' + escHtml(c) + '</li>'; });
+                html += '</ul></div>';
+            }
+
+            document.getElementById('modalTitle').textContent = emp.name;
+            document.getElementById('modalBody').innerHTML = html;
+            document.getElementById('detailModal').classList.add('open');
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detailModal').classList.remove('open');
+            document.getElementById('addSkillFormContainer').style.display = 'none';
+            currentEmployeeId = null;
+        }
+
+        function closeModal(e) { if (e.target === e.currentTarget) closeDetailModal(); }
+
+        function toggleAddSkillForm() {
+            var container = document.getElementById('addSkillFormContainer');
+            var isHidden = container.style.display === 'none';
+            container.style.display = isHidden ? 'block' : 'none';
+            if (isHidden && currentEmployeeId) {
+                var emp = appData.employees.find(function(e) { return e.name === currentEmployeeId; });
+                if (emp) {
+                    var cats = Object.keys(emp.skills);
+                    if (!cats.length) cats = [emp.department];
+                    var catSel = document.getElementById('modalSkillCategory');
+                    catSel.innerHTML = cats.map(function(c) {
+                        return '<option value="' + escAttr(c) + '">' + escHtml(c) + '</option>';
+                    }).join('') + '<option value="__new__">+ New Category</option>';
+                }
+                document.getElementById('modalSkillName').value = '';
+                document.getElementById('modalSkillProf').value = '';
+                document.getElementById('modalSkillName').focus();
+            }
+        }
+
+        function saveModalSkill() {
+            var emp = appData.employees.find(function(e) { return e.name === currentEmployeeId; });
+            if (!emp) { showToast('Employee not found', 'error'); return; }
+
+            var catSel = document.getElementById('modalSkillCategory');
+            var category = catSel.value;
+            var skillName = document.getElementById('modalSkillName').value.trim();
+            var proficiency = document.getElementById('modalSkillProf').value;
+
+            if (category === '__new__') {
+                category = prompt('Enter new category name:');
+                if (!category || !category.trim()) return;
+                category = category.trim();
+            }
+
+            if (!skillName) { showToast('Please enter a skill name', 'error'); return; }
+            if (!proficiency) { showToast('Please select a proficiency level', 'error'); return; }
+
+            // Ensure category exists
+            if (!emp.skills[category]) emp.skills[category] = [];
+
+            // Check for duplicate
+            var exists = emp.skills[category].some(function(s) { return s.skill.toLowerCase() === skillName.toLowerCase(); });
+            if (exists) { showToast('"' + skillName + '" already exists in ' + category, 'error'); return; }
+
+            // Add the skill
+            emp.skills[category].push({ skill: skillName, proficiency: proficiency });
+
+            // Persist
+            addLocalEmployee(emp);
+
+            // Refresh modal view
+            showEmployeeDetail(currentEmployeeId);
+            document.getElementById('addSkillFormContainer').style.display = 'block';
+
+            // Refresh all views
+            updateCounts();
+            renderDashboard();
+            renderAllViews();
+
+            showToast('Added "' + skillName + '" (' + proficiency + ') to ' + emp.name, 'success');
+        }
+
+        function removeSkillFromEmployee(empName, category, skillIdx) {
+            var emp = appData.employees.find(function(e) { return e.name === empName; });
+            if (!emp || !emp.skills[category]) return;
+            var removed = emp.skills[category].splice(skillIdx, 1);
+            if (!removed.length) return;
+            // Clean up empty categories
+            if (emp.skills[category].length === 0) delete emp.skills[category];
+            addLocalEmployee(emp);
+            showEmployeeDetail(empName);
+            updateCounts();
+            renderDashboard();
+            renderAllViews();
+            showToast('Removed "' + removed[0].skill + '" from ' + empName, 'success');
+        }
+
+        function editEmployee() {
+            var emp = appData.employees.find(function(e) { return e.name === currentEmployeeId; });
+            if (!emp) return;
+            closeDetailModal();
+            showPage('add-employee');
+            document.getElementById('formName').value = emp.name;
+            document.getElementById('formEmail').value = emp.email || '';
+            document.getElementById('formDept').value = emp.department;
+            populateFormProducts();
+            document.getElementById('formProduct').value = emp.product || '';
+            updateFormCategories();
+
+            setTimeout(function() {
+                var categories = getFormCategories(emp.department);
+                categories.forEach(function(cat) {
+                    var skills = emp.skills[cat] || [];
+                    var container = document.querySelector('[data-category="' + cat + '"]');
+                    if (!container) return;
+                    container.innerHTML = '';
+                    skills.forEach(function(s) { addSkillRow(container, cat, s.skill, s.proficiency); });
+                    addSkillRow(container, cat, '', '');
+                });
+                document.getElementById('formCerts').value = (emp.certifications || []).join(', ');
+            }, 100);
+        }
+
+        // ==================== REMOVE ====================
+        function renderRemoveList() {
+            var q = (document.getElementById('removeSearch') ? document.getElementById('removeSearch').value : '').toLowerCase();
+            var emps = appData.employees;
+            if (q) emps = emps.filter(function(e) { return e.name.toLowerCase().indexOf(q) >= 0; });
+
+            if (!emps.length) {
+                document.getElementById('removeContainer').innerHTML = '<div class="empty-state"><div class="empty-icon">\uD83D\uDC7B</div><h3>No employees found</h3></div>';
+                return;
+            }
+
+            document.getElementById('removeContainer').innerHTML = emps.map(function(emp) {
+                var color = getAvatarColor(emp.name);
+                return '<div class="remove-card">' +
+                    '<div class="avatar" style="background:' + color + ';width:40px;height:40px;font-size:14px;">' + getInitials(emp.name) + '</div>' +
+                    '<div class="emp-details"><h4>' + escHtml(emp.name) + '</h4><p>' + escHtml(emp.department) + ' \u00B7 ' + escHtml(emp.product || 'N/A') + ' \u00B7 ' + escHtml(emp.email || 'N/A') + '</p></div>' +
+                    '<button class="btn btn-sm btn-danger" onclick="confirmRemove(\'' + escAttr(emp.name) + '\')">\uD83D\uDDD1\ufe0f Remove</button></div>';
+            }).join('');
+        }
+
+        function confirmRemove(name) {
+            pendingRemoveName = name;
+            document.getElementById('confirmMessage').textContent = 'Are you sure you want to remove "' + name + '" from the skill matrix? This action cannot be undone.';
+            document.getElementById('confirmDialog').classList.add('open');
+        }
+
+        function confirmRemoveFromModal() {
+            if (!currentEmployeeId) return;
+            closeDetailModal();
+            confirmRemove(currentEmployeeId);
+        }
+
+        function closeConfirmDialog() {
+            document.getElementById('confirmDialog').classList.remove('open');
+            pendingRemoveName = null;
+        }
+
+        function closeConfirm(e) { if (e.target === e.currentTarget) closeConfirmDialog(); }
+
+        function executeRemove() {
+            if (!pendingRemoveName) return;
+            var name = pendingRemoveName;
+            appData.employees = appData.employees.filter(function(e) { return e.name !== name; });
+            removeLocalEmployee(name);
+            closeConfirmDialog();
+            updateCounts();
+            renderDashboard();
+            renderAllViews();
+            renderRemoveList();
+            showToast(name + ' has been removed from the skill matrix', 'success');
+        }
+
+        // ==================== REFERENCE ====================
+        function renderProficiencyRef() {
+            document.getElementById('profRefCards').innerHTML = appData.reference.proficiencyLevels.map(function(l) {
+                return '<div class="prof-ref-card level-' + l.level + '"><div class="level-number">' + l.level + '</div><h4>' + escHtml(l.name) + '</h4><p>' + escHtml(l.description) + '</p></div>';
+            }).join('');
+        }
+
+        function renderSkillRef() {
+            var allRef = {};
+            Object.keys(appData.reference.dev || {}).forEach(function(k) { allRef['Dev: ' + k] = appData.reference.dev[k]; });
+            Object.keys(appData.reference.qa || {}).forEach(function(k) { allRef['QA: ' + k] = appData.reference.qa[k]; });
+
+            var categories = Object.keys(allRef);
+            document.getElementById('refCategoryTabs').innerHTML = categories.map(function(cat, i) {
+                return '<button class="category-tab ' + (i === 0 ? 'active' : '') + '" onclick="showRefCategory(\'' + escAttr(cat) + '\', this)">' + escHtml(cat) + '</button>';
+            }).join('');
+
+            // Populate the Add Custom Skill category dropdown
+            var catSelect = document.getElementById('refAddCategory');
+            if (catSelect) {
+                catSelect.innerHTML = categories.map(function(cat) {
+                    return '<option value="' + escAttr(cat) + '">' + escHtml(cat) + '</option>';
+                }).join('');
+            }
+
+            if (categories.length) showRefCategoryContent(categories[0], allRef);
+        }
+
+        function showRefCategory(cat, btn) {
+            document.querySelectorAll('#refCategoryTabs .category-tab').forEach(function(t) { t.classList.remove('active'); });
+            btn.classList.add('active');
+            var allRef = {};
+            Object.keys(appData.reference.dev || {}).forEach(function(k) { allRef['Dev: ' + k] = appData.reference.dev[k]; });
+            Object.keys(appData.reference.qa || {}).forEach(function(k) { allRef['QA: ' + k] = appData.reference.qa[k]; });
+            showRefCategoryContent(cat, allRef);
+        }
+
+        function showRefCategoryContent(cat, allRef) {
+            var skills = allRef[cat] || [];
+            var custom = JSON.parse(localStorage.getItem('skillmatrix-custom-skills') || '{}');
+            var customList = custom[cat] || [];
+            var html = '<div class="table-container"><table class="data-table"><thead><tr><th>#</th><th>Skill</th><th>Source</th></tr></thead><tbody>';
+            skills.forEach(function(s, i) {
+                var isCustom = customList.indexOf(s) >= 0;
+                html += '<tr><td>' + (i + 1) + '</td><td>' + escHtml(s) + '</td><td>' + (isCustom ? '<span style="color:var(--primary);font-weight:500;">Custom</span>' : 'Reference') + '</td></tr>';
+            });
+            html += '</tbody></table></div>';
+            document.getElementById('refSkillsContainer').innerHTML = html;
+        }
+
+        function addCustomSkillToRef() {
+            var catKey = document.getElementById('refAddCategory').value;
+            var skillName = document.getElementById('refAddSkillName').value.trim();
+            if (!catKey || !skillName) { showToast('Please select a category and enter a skill name', 'error'); return; }
+
+            var parts = catKey.split(': ');
+            var scope = parts[0];
+            var category = parts.slice(1).join(': ');
+            var src = scope === 'Dev' ? appData.reference.dev : appData.reference.qa;
+            if (!src || !src[category]) { showToast('Invalid category', 'error'); return; }
+
+            if (src[category].indexOf(skillName) >= 0) { showToast('"' + skillName + '" already exists in this category', 'error'); return; }
+
+            // Add to appData
+            src[category].push(skillName);
+
+            // Persist to localStorage
+            var custom = JSON.parse(localStorage.getItem('skillmatrix-custom-skills') || '{}');
+            if (!custom[catKey]) custom[catKey] = [];
+            custom[catKey].push(skillName);
+            localStorage.setItem('skillmatrix-custom-skills', JSON.stringify(custom));
+
+            // Re-render
+            renderSkillRef();
+            document.getElementById('refAddCategory').value = catKey;
+            showRefCategoryByKey(catKey);
+            document.getElementById('refAddSkillName').value = '';
+            showToast('Added "' + skillName + '" to ' + catKey + '. You can now use it in the employee form.', 'success');
+        }
+
+        function showRefCategoryByKey(catKey) {
+            var allRef = {};
+            Object.keys(appData.reference.dev || {}).forEach(function(k) { allRef['Dev: ' + k] = appData.reference.dev[k]; });
+            Object.keys(appData.reference.qa || {}).forEach(function(k) { allRef['QA: ' + k] = appData.reference.qa[k]; });
+            var tabs = document.querySelectorAll('#refCategoryTabs .category-tab');
+            tabs.forEach(function(t) {
+                t.classList.remove('active');
+                if (t.textContent === catKey) t.classList.add('active');
+            });
+            showRefCategoryContent(catKey, allRef);
+        }
+
+        function updateRefAddSkillHint() { /* placeholder for future enhancements */ }
+
+        // ==================== FORM ====================
+        function populateFormProducts() {
+            if (!appData) return;
+            document.getElementById('formProduct').innerHTML = '<option value="">Select product</option>' +
+                appData.products.map(function(p) { return '<option value="' + escAttr(p) + '">' + escHtml(p) + '</option>'; }).join('');
+        }
+
+        function getFormCategories(dept) {
+            if (dept === 'Dev') return ['FrontEnd', '.Net', 'Database', 'Cloud', 'Backend', 'Deployment/Repository', 'Design Patterns', 'Search Engines', 'CRM (Integrations)', 'UI Testing'];
+            if (dept === 'QA') return ['Automation', 'Manual Testing', 'API Testing', 'Performance Testing', 'CI/CD'];
+            if (dept === 'Cloud Ops') return ['Cloud', 'Deployment/Repository', 'DevOps Tool', 'Administrator (OS)/Storage'];
+            if (dept === 'Design') return ['Design'];
+            if (dept === 'Project Management') return ['Project Management'];
+            if (dept === 'Product Management') return ['Product Management'];
+            if (dept === 'Technical Writing') return ['Technical Writing'];
+            if (dept === 'Product Marketing') return ['Product Marketing'];
+            if (dept === 'EIT') return ['EIT'];
+            return [];
+        }
+
+        function updateFormCategories() {
+            var dept = document.getElementById('formDept').value;
+            var container = document.getElementById('formSkillsContainer');
+            if (!dept) {
+                container.innerHTML = '<p style="color:var(--text-secondary);padding:20px 0;">Select a department to see skill categories</p>';
+                return;
+            }
+
+            var categories = getFormCategories(dept);
+            var html = '';
+            categories.forEach(function(cat) {
+                var refSkills = getRefSkillsForCategory(cat, dept);
+                var useDropdown = refSkills.length > 0;
+                var inputHtml;
+                if (useDropdown) {
+                    var skillOpts = '<option value="">-- Select Skill --</option>' + refSkills.map(function(s) { return '<option value="' + escAttr(s) + '">' + escHtml(s) + '</option>'; }).join('');
+                    inputHtml = '<select class="skill-select">' + skillOpts + '</select>';
+                } else {
+                    inputHtml = '<input type="text" class="skill-select" placeholder="Enter skill name">';
+                }
+                html += '<div class="skills-section-header"><h4>' + escHtml(cat) + '</h4>' +
+                    '<button type="button" class="add-skill-btn" onclick="addSkillRow(document.querySelector(\'[data-category=&quot;' + cat + '&quot;]\'), \'' + cat.replace(/'/g, "\\'") + '\')">+ Add Skill</button></div>' +
+                    (useDropdown ? '<p class="custom-skill-note">\uD83D\uDCA1 Skills loaded from the reference list. <a href="#" onclick="showPage(\'ref-skills\');return false;" style="color:var(--primary);">Add custom skills here</a> first if needed.</p>' : '<p class="custom-skill-note">\uD83D\uDCA1 Type your skill name directly.</p>') +
+                    '<div data-category="' + cat + '">' +
+                    '<div class="skill-entry-row">' +
+                    inputHtml +
+                    '<select><option value="">Proficiency</option><option value="None/Low">None/Low</option><option value="Basic">Basic</option><option value="Intermediate">Intermediate</option><option value="Expert">Expert</option></select>' +
+                    '<button type="button" class="remove-btn" onclick="this.parentElement.remove()">\u2715</button></div></div>';
+            });
+            container.innerHTML = html;
+        }
+
+        function getRefSkillsForCategory(cat, dept) {
+            if (!appData) return [];
+            var devMap = {
+                'FrontEnd': 'Front-end', '.Net': '.NET/Authentication', 'Database': 'Database',
+                'Cloud': 'Cloud', 'Backend': 'Back End', 'Deployment/Repository': 'Deployment/Repository',
+                'Design Patterns': 'Design Patterns/Architecture', 'Search Engines': 'Search Engines',
+                'CRM (Integrations)': 'CRM (Integrations)'
+            };
+            var qaMap = {
+                'Automation': 'Automation', 'Manual Testing': 'Manual Testing',
+                'API Testing': 'API Testing', 'Performance Testing': 'Performance Testing'
+            };
+            var ref = dept === 'QA' ? qaMap : devMap;
+            var src = dept === 'QA' ? appData.reference.qa : appData.reference.dev;
+            return (ref[cat] && src[ref[cat]]) ? src[ref[cat]] : [];
+        }
+
+        function addSkillRow(container, category, skill, proficiency) {
+            if (!container) return;
+            var dept = document.getElementById('formDept').value;
+            var refSkills = getRefSkillsForCategory(category, dept);
+            var useDropdown = refSkills.length > 0;
+            var inputHtml;
+            if (useDropdown) {
+                var skillOpts = '<option value="">-- Select Skill --</option>' + refSkills.map(function(s) {
+                    return '<option value="' + escAttr(s) + '"' + (s === skill ? ' selected' : '') + '>' + escHtml(s) + '</option>';
+                }).join('');
+                inputHtml = '<select class="skill-select">' + skillOpts + '</select>';
+            } else {
+                inputHtml = '<input type="text" class="skill-select" placeholder="Enter skill name" value="' + escAttr(skill || '') + '">';
+            }
+            var row = document.createElement('div');
+            row.className = 'skill-entry-row';
+            row.innerHTML = inputHtml +
+                '<select><option value="">Proficiency</option>' +
+                '<option value="None/Low"' + (proficiency === 'None/Low' ? ' selected' : '') + '>None/Low</option>' +
+                '<option value="Basic"' + (proficiency === 'Basic' ? ' selected' : '') + '>Basic</option>' +
+                '<option value="Intermediate"' + (proficiency === 'Intermediate' ? ' selected' : '') + '>Intermediate</option>' +
+                '<option value="Expert"' + (proficiency === 'Expert' ? ' selected' : '') + '>Expert</option></select>' +
+                '<button type="button" class="remove-btn" onclick="this.parentElement.remove()">\u2715</button>';
+            container.appendChild(row);
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            var name = document.getElementById('formName').value.trim();
+            var email = document.getElementById('formEmail').value.trim();
+            var dept = document.getElementById('formDept').value;
+            var product = document.getElementById('formProduct').value;
+
+            if (!name || !email || !dept || !product) {
+                showToast('Please fill in all required fields', 'error');
+                return;
+            }
+
+            var skills = {};
+            getFormCategories(dept).forEach(function(cat) {
+                skills[cat] = [];
+                var container = document.querySelector('[data-category="' + cat + '"]');
+                if (!container) return;
+                container.querySelectorAll('.skill-entry-row').forEach(function(row) {
+                    var si = row.querySelector('.skill-select');
+                    var selects = row.querySelectorAll('select');
+                    var ps = si.tagName === 'SELECT' ? selects[1] : selects[0];
+                    var skillVal = si ? si.value.trim() : '';
+                    var profVal = ps ? ps.value : '';
+                    if (skillVal && profVal) {
+                        skills[cat].push({ skill: skillVal, proficiency: profVal });
+                    }
+                });
+            });
+
+            var certsText = document.getElementById('formCerts').value;
+            var certifications = certsText ? certsText.split(',').map(function(c) { return c.trim(); }).filter(Boolean) : [];
+            var employee = { name: name, email: email, product: product, department: dept, skills: skills, certifications: certifications };
+
+            var existingIdx = appData.employees.findIndex(function(e) { return e.name === name; });
+            if (existingIdx >= 0) {
+                appData.employees[existingIdx] = employee;
+                showToast('Updated ' + name + '\'s profile successfully!', 'success');
+            } else {
+                appData.employees.push(employee);
+                showToast('Added ' + name + ' successfully!', 'success');
+            }
+
+            addLocalEmployee(employee);
+            updateCounts();
+            renderDashboard();
+            renderAllViews();
+            renderRemoveList();
+            resetForm();
+            showPage('employees');
+        }
+
+        function resetForm() {
+            document.getElementById('employeeForm').reset();
+            document.getElementById('formSkillsContainer').innerHTML = '<p style="color:var(--text-secondary);padding:20px 0;">Select a department to see skill categories</p>';
+        }
+
+        // ==================== TOAST ====================
+        function showToast(msg, type) {
+            var t = document.getElementById('toast');
+            t.textContent = msg;
+            t.className = 'toast ' + (type || 'info') + ' show';
+            setTimeout(function() { t.classList.remove('show'); }, 3000);
+        }
+
+        // ==================== KEYBOARD ====================
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') { closeDetailModal(); closeConfirmDialog(); }
+        });
+
+        // ==================== INIT ====================
+        loadData();
+    </script>
+</body>
+</html>
