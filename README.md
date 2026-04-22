@@ -1,6 +1,6 @@
 # Skill Matrix Tool
 
-A web-based dashboard that visualizes your organization's skill matrix data from an Excel spreadsheet. Browse employees across **9 departments**, filter by product or skill, view proficiency levels, and manage skills — all from your browser.
+A web-based dashboard that visualizes Upland's skill matrix data from an Excel spreadsheet. Browse employees across **9 departments**, filter by product or skill, view proficiency levels, and manage skills — all from your browser.
 
 ![Skill Matrix Tool Demo](demo.gif)
 
